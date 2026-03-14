@@ -1,0 +1,932 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main>
+      <div class="chatbot vars-alt">
+        <div class="chatbot__chat">
+          <div class="chatbot__wrap">
+            <div class="chatbot__head">
+              <div class="chatbot__logo-wrap">
+                <img src="assets/img/logo.svg" alt="" class="chatbot__logo" />
+              </div>
+              <button class="chatbot__close-btn ic ic_white" type="button">
+                <svg class="chatbot__close-btn-ic" aria-hidden="true">
+                  <use href="#cross-svg"></use>
+                </svg>
+              </button>
+            </div>
+            <div class="chatbot__body">
+              <div class="chatbot__content">
+                <div class="chatbot__shell"></div>
+              </div>
+              <form action="#" class="chatbot__form">
+                <div class="chatbot__field field-chatbot">
+                  <input
+                    type="text"
+                    placeholder="Введите сообщение"
+                    autocomplete="none"
+                    class="field-chatbot__field txt-s"
+                  />
+                </div>
+                <button class="chatbot__submit ic _has-hover" type="submit">
+                  <svg aria-hidden="true"><use href="#arr-svg"></use></svg>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <button class="chatbot__btn ic _has-hover" type="button">
+          <svg aria-hidden="true">
+            <use href="#chatbot-svg"></use>
+          </svg>
+        </button>
+      </div>
+    </main>
+
+    <svg style="display: none" aria-hidden="true">
+      <symbol
+        id="arr-svg"
+        viewBox="0 0 19 19"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g clip-path="url(#clip0_8_256)">
+          <path
+            d="M1.5887 18.9993H0.00537109V12.666C0.00683632 10.7777 0.757214 8.96713 2.0919 7.63141C3.42658 6.29569 5.23657 5.5439 7.12483 5.54097L10.9589 5.41905V0.341309L18.3111 7.69826C18.7563 8.14364 19.0064 8.74762 19.0064 9.37738C19.0064 10.0071 18.7563 10.6111 18.3111 11.0565L10.9605 18.4135V13.3357L7.12483 13.4576C5.65644 13.4604 4.24904 14.0453 3.21125 15.0841C2.17345 16.1229 1.58996 17.5309 1.5887 18.9993Z"
+            fill="white"
+          />
+        </g>
+        <defs>
+          <clipPath id="clip0_8_256">
+            <rect width="19" height="19" fill="white" />
+          </clipPath>
+        </defs>
+      </symbol>
+
+      <symbol
+        id="sparkle-svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M14.9998 1.99963L15.5385 4.3912C15.9955 6.41978 17.5796 8.00394 19.6082 8.46091L21.9998 8.99963L19.6082 9.53836C17.5796 9.99532 15.9955 11.5794 15.5385 13.608L14.9998 15.9996L14.4611 13.608C14.0041 11.5794 12.42 9.99532 10.3914 9.53836L7.99976 8.99963L10.3914 8.46091C12.4199 8.00394 14.0041 6.41978 14.4611 4.39121L14.9998 1.99963Z"
+          fill="white"
+        />
+        <path
+          d="M6.99976 12L7.38457 13.7083C7.71097 15.1572 8.84251 16.2888 10.2915 16.6152L11.9998 17L10.2915 17.3848C8.84251 17.7112 7.71097 18.8427 7.38457 20.2917L6.99976 22L6.61495 20.2917C6.28855 18.8427 5.15701 17.7112 3.70803 17.3848L1.99976 17L3.70803 16.6152C5.15701 16.2888 6.28855 15.1573 6.61495 13.7083L6.99976 12Z"
+          fill="white"
+        />
+      </symbol>
+
+      <symbol
+        id="cross-svg"
+        viewBox="0 0 27 27"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M21.0453 7.54534L19.4546 5.95459L13.5 11.9092L7.54534 5.95459L5.95459 7.54534L11.9092 13.5L5.95459 19.4546L7.54534 21.0453L13.5 15.0907L19.4546 21.0453L21.0453 19.4546L15.0907 13.5L21.0453 7.54534Z"
+          fill="currentColor"
+        />
+      </symbol>
+
+      <symbol
+        id="chatbot-svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g clip-path="url(#clip0_8_199)">
+          <path
+            d="M9 18H0V9C0 7.21997 0.527841 5.47992 1.51677 3.99987C2.50571 2.51983 3.91131 1.36628 5.55585 0.685088C7.20038 0.00389957 9.00998 -0.17433 10.7558 0.172937C12.5016 0.520204 14.1053 1.37737 15.364 2.63604C16.6226 3.89472 17.4798 5.49836 17.8271 7.24419C18.1743 8.99002 17.9961 10.7996 17.3149 12.4442C16.6337 14.0887 15.4802 15.4943 14.0001 16.4832C12.5201 17.4722 10.78 18 9 18ZM20 9.08C19.977 11.9691 18.8191 14.7333 16.7762 16.7762C14.7332 18.8191 11.9691 19.977 9.08 20C9.78145 21.215 10.7901 22.2241 12.0047 22.9262C13.2192 23.6282 14.5971 23.9986 16 24H24V16C23.9986 14.5971 23.6282 13.2192 22.9262 12.0047C22.2241 10.7901 21.215 9.78146 20 9.08Z"
+            fill="white"
+          />
+        </g>
+        <defs>
+          <clipPath id="clip0_8_199">
+            <rect width="24" height="24" fill="white" />
+          </clipPath>
+        </defs>
+      </symbol>
+    </svg>
+
+    <script defer src="script.js"></script>
+
+    <!-- тут не переносим -->
+    <details
+      style="margin: 0 auto; max-width: 500px; font-family: &quot;Roboto&quot;"
+      class="chatbot-devpanel__section"
+      open
+    >
+      <summary>Публичный API виджета</summary>
+
+      <p class="chatbot-devpanel__hint">
+        Виджет предоставляет публичный API в объекте
+        <strong>window.FLCChatbot</strong>. Внешний код может вызывать эти
+        методы напрямую.
+      </p>
+
+      <div class="chatbot-devpanel__code-title">Доступ к экземпляру</div>
+      <pre class="chatbot-devpanel__code">window.FLCChatbot</pre>
+
+      <div class="chatbot-devpanel__code-title">Методы управления виджетом</div>
+      <pre class="chatbot-devpanel__code">
+window.FLCChatbot.open()
+window.FLCChatbot.close()
+window.FLCChatbot.toggle()
+window.FLCChatbot.lock()
+window.FLCChatbot.unlock()
+window.FLCChatbot.clear()
+window.FLCChatbot.reset()
+window.FLCChatbot.getState()</pre
+      >
+
+      <div class="chatbot-devpanel__code-title">
+        Методы добавления сообщений
+      </div>
+      <pre class="chatbot-devpanel__code">
+window.FLCChatbot.addBotMessage("Текст сообщения")
+window.FLCChatbot.addUserMessage("Текст сообщения")
+
+window.FLCChatbot.addMessage({
+  role: "bot",
+  blocks: [
+    { type: "text", text: "Выберите вариант:" },
+    {
+      type: "options",
+      options: [
+        { label: "Вариант 1", value: "v1" },
+        { label: "Вариант 2", value: "v2" }
+      ]
+    }
+  ]
+})</pre
+      >
+
+      <div class="chatbot-devpanel__code-title">Методы запроса / ответа</div>
+      <pre class="chatbot-devpanel__code">
+const requestId = window.FLCChatbot.send("Текст сообщения")
+
+window.FLCChatbot.resolve(requestId, {
+  text: "Ответ бота"
+})
+
+window.FLCChatbot.reject(requestId, "Текст ошибки")</pre
+      >
+
+      <p class="chatbot-devpanel__hint">
+        Метод <strong>send()</strong> добавляет сообщение пользователя,
+        переводит чат в pending и возвращает <strong>requestId</strong>. Позже
+        по этому id можно вызвать <strong>resolve()</strong> или
+        <strong>reject()</strong>.
+      </p>
+
+      <div class="chatbot-devpanel__code-title">Методы pending</div>
+      <pre class="chatbot-devpanel__code">
+window.FLCChatbot.showPending()
+window.FLCChatbot.hidePending()</pre
+      >
+
+      <div class="chatbot-devpanel__code-title">Transport-режим</div>
+      <pre class="chatbot-devpanel__code">
+window.FLCChatbot.setTransport(async ({ text, requestId, meta }) => {
+  return {
+    text: "Ответ на: " + text
+  }
+})</pre
+      >
+
+      <p class="chatbot-devpanel__hint">
+        Transport нужен, если внешний код хочет централизованно обрабатывать
+        send() и автоматически возвращать ответ.
+      </p>
+    </details>
+
+    <details
+      style="margin: 0 auto; max-width: 500px; font-family: &quot;Roboto&quot;"
+      class="chatbot-devpanel__section"
+      open
+    >
+      <summary>Базовые сценарии использования</summary>
+
+      <div class="chatbot-devpanel__code-title">
+        1. Просто открыть или закрыть виджет
+      </div>
+      <pre class="chatbot-devpanel__code">
+window.FLCChatbot.open()
+window.FLCChatbot.close()</pre
+      >
+
+      <div class="chatbot-devpanel__code-title">
+        2. Просто показать сообщение от бота
+      </div>
+      <pre class="chatbot-devpanel__code">
+window.FLCChatbot.addBotMessage("Здравствуйте! Чем могу помочь?")</pre
+      >
+
+      <div class="chatbot-devpanel__code-title">3. Ручной цикл запроса</div>
+      <pre class="chatbot-devpanel__code">
+const requestId = window.FLCChatbot.send("Физическое лицо")
+
+window.FLCChatbot.resolve(requestId, {
+  text: "Уточните, пожалуйста, страну отправления."
+})</pre
+      >
+
+      <div class="chatbot-devpanel__code-title">4. Ручной цикл с ошибкой</div>
+      <pre class="chatbot-devpanel__code">
+const requestId = window.FLCChatbot.send("Физическое лицо")
+
+window.FLCChatbot.reject(requestId, "Сервис временно недоступен")</pre
+      >
+
+      <div class="chatbot-devpanel__code-title">
+        5. Ответ с вариантами выбора
+      </div>
+      <pre class="chatbot-devpanel__code">
+const requestId = window.FLCChatbot.send("Хочу оформить перевозку")
+
+window.FLCChatbot.resolve(requestId, {
+  text: "Выберите тип перевозки:",
+  optionsText: "Доступные варианты:",
+  options: [
+    { label: "Авто", value: "auto" },
+    { label: "Авиа", value: "air" },
+    { label: "Море", value: "sea" }
+  ]
+})</pre
+      >
+    </details>
+
+    <details
+      style="margin: 0 auto; max-width: 500px; font-family: &quot;Roboto&quot;"
+      class="chatbot-devpanel__section"
+      open
+    >
+      <summary>События виджета</summary>
+
+      <p class="chatbot-devpanel__hint">
+        Виджет генерирует DOM-события на корневом элементе
+        <strong>.chatbot</strong>. Их можно использовать для аналитики,
+        логирования и внешней интеграции.
+      </p>
+
+      <div class="chatbot-devpanel__code-title">Подписка на события</div>
+      <pre class="chatbot-devpanel__code">
+const root = document.querySelector(".chatbot")
+
+root.addEventListener("chatbot:open", (event) => {
+  console.log("open", event.detail.state)
+})
+
+root.addEventListener("chatbot:close", (event) => {
+  console.log("close", event.detail.state)
+})
+
+root.addEventListener("chatbot:outgoing", (event) => {
+  console.log("outgoing", event.detail)
+})
+
+root.addEventListener("chatbot:resolved", (event) => {
+  console.log("resolved", event.detail)
+})
+
+root.addEventListener("chatbot:rejected", (event) => {
+  console.log("rejected", event.detail)
+})
+
+root.addEventListener("chatbot:statechange", (event) => {
+  console.log("statechange", event.detail.next)
+})</pre
+      >
+
+      <div class="chatbot-devpanel__code-title">
+        Альтернативная подписка через API
+      </div>
+      <pre class="chatbot-devpanel__code">
+window.FLCChatbot.on("open", (event) => {
+  console.log(event.detail.state)
+})
+
+window.FLCChatbot.on("close", (event) => {
+  console.log(event.detail.state)
+})</pre
+      >
+    </details>
+
+    <details
+      style="margin: 0 auto; max-width: 500px; font-family: &quot;Roboto&quot;"
+      class="chatbot-devpanel__section"
+      open
+    >
+      <summary>Что не является публичным API</summary>
+
+      <p class="chatbot-devpanel__hint">
+        Эти методы относятся к внутренней реализации виджета и не должны
+        использоваться внешним кодом.
+      </p>
+
+      <pre class="chatbot-devpanel__code">
+renderState()
+buildWrap()
+buildBlock()
+normalizeMessage()
+normalizeBlock()
+createTextBubble()
+createListBubble()
+createLoaderBubble()
+createOptions()</pre
+      >
+
+      <p class="chatbot-devpanel__hint">
+        Например, <strong>renderState()</strong> — это внутренняя синхронизация
+        state, class и aria-атрибутов. Это не часть контракта интеграции.
+      </p>
+    </details>
+
+    <details
+      style="margin: 0 auto; max-width: 500px; font-family: &quot;Roboto&quot;"
+      class="chatbot-devpanel__section"
+      open
+    >
+      <summary>Как использовать вместе с сервером</summary>
+
+      <p class="chatbot-devpanel__hint">
+        Сервер не вызывает window.FLCChatbot напрямую. Обычно клиентский код
+        получает ответ сервера и затем вызывает методы виджета.
+      </p>
+
+      <div class="chatbot-devpanel__code-title">Пример ручной интеграции</div>
+      <pre class="chatbot-devpanel__code">
+const requestId = window.FLCChatbot.send("Физическое лицо")
+
+fetch("/api/chat", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    message: "Физическое лицо",
+    requestId
+  })
+})
+  .then((response) => response.json())
+  .then((data) => {
+    window.FLCChatbot.resolve(requestId, data)
+  })
+  .catch((error) => {
+    window.FLCChatbot.reject(requestId, error.message)
+  })</pre
+      >
+
+      <div class="chatbot-devpanel__code-title">Пример через setTransport</div>
+      <pre class="chatbot-devpanel__code">
+window.FLCChatbot.setTransport(async ({ text, requestId, meta }) => {
+  const response = await fetch("/api/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      message: text,
+      requestId,
+      meta
+    })
+  })
+
+  if (!response.ok) {
+    throw new Error("HTTP " + response.status)
+  }
+
+  return await response.json()
+})</pre
+      >
+    </details>
+    <div class="chatbot-devpanel" data-chatbot-devpanel>
+      <details class="chatbot-devpanel__section" open>
+        <summary>Управление виджетом</summary>
+        <p class="chatbot-devpanel__hint">
+          Быстрые действия для проверки открытия, очистки, pending-состояния и
+          сброса.
+        </p>
+
+        <div class="chatbot-devpanel__group">
+          <button type="button" data-dev-action="open">open</button>
+          <button type="button" data-dev-action="close">close</button>
+          <button type="button" data-dev-action="pending">show pending</button>
+          <button type="button" data-dev-action="hide-pending">
+            hide pending
+          </button>
+          <button type="button" data-dev-action="clear">clear</button>
+          <button type="button" data-dev-action="reset">reset</button>
+        </div>
+      </details>
+
+      <details class="chatbot-devpanel__section" open>
+        <summary>Ручное добавление сообщений</summary>
+        <p class="chatbot-devpanel__hint">
+          Используется для проверки отображения сообщений без backend.
+        </p>
+
+        <label class="chatbot-devpanel__label">
+          Текст сообщения
+          <span class="chatbot-devpanel__hint">
+            Этот текст будет добавлен либо как bot message, либо как user
+            message.
+          </span>
+          <textarea
+            data-dev-text
+            placeholder="Например: Здравствуйте! Уточните, пожалуйста, страну отправления."
+          ></textarea>
+        </label>
+
+        <div class="chatbot-devpanel__group">
+          <button type="button" data-dev-action="bot-message">
+            add bot message
+          </button>
+          <button type="button" data-dev-action="user-message">
+            add user message
+          </button>
+          <button type="button" data-dev-action="send">send()</button>
+        </div>
+
+        <p class="chatbot-devpanel__hint">
+          Кнопка <strong>send()</strong> запускает обычный цикл отправки: user
+          message → pending → ожидание resolve/reject.
+        </p>
+      </details>
+
+      <details class="chatbot-devpanel__section" open>
+        <summary>Тест опций</summary>
+        <p class="chatbot-devpanel__hint">
+          Формат опций: одна строка = одна опция. Можно писать
+          <strong>Текст</strong> или <strong>Текст|value</strong>.
+        </p>
+
+        <label class="chatbot-devpanel__label">
+          Текст перед опциями
+          <span class="chatbot-devpanel__hint">
+            Будет выведен как обычное сообщение бота перед блоком опций.
+          </span>
+          <input
+            type="text"
+            data-dev-options-title
+            placeholder="Например: Выберите из вариантов:"
+          />
+        </label>
+
+        <label class="chatbot-devpanel__label">
+          Опции
+          <span class="chatbot-devpanel__hint">
+            Каждая строка — отдельная опция.
+          </span>
+          <textarea
+            data-dev-options-items
+            placeholder="Вариант №1|opt1&#10;Вариант №2|opt2&#10;№3|opt3&#10;Вариант №4|opt4"
+          ></textarea>
+        </label>
+
+        <div class="chatbot-devpanel__group">
+          <button type="button" data-dev-action="bot-options">
+            add bot options
+          </button>
+          <button type="button" data-dev-action="resolve-options">
+            resolve active options
+          </button>
+        </div>
+      </details>
+
+      <details class="chatbot-devpanel__section" open>
+        <summary>Resolve / reject активного запроса</summary>
+        <p class="chatbot-devpanel__hint">
+          Здесь можно вручную завершить текущий активный запрос, если transport
+          не подключён или нужен быстрый тест ответа.
+        </p>
+
+        <label class="chatbot-devpanel__label">
+          Текст ответа
+          <span class="chatbot-devpanel__hint">
+            Будет показан при resolve active как сообщение бота.
+          </span>
+          <textarea
+            data-dev-resolve
+            placeholder="Например: Уточните, пожалуйста, тип груза."
+          ></textarea>
+        </label>
+
+        <div class="chatbot-devpanel__group">
+          <button type="button" data-dev-action="resolve">
+            resolve active
+          </button>
+          <button type="button" data-dev-action="reject">reject active</button>
+        </div>
+      </details>
+
+      <details class="chatbot-devpanel__section" open>
+        <summary>Transport</summary>
+        <p class="chatbot-devpanel__hint">
+          Через fetch transport фронт отправляет запрос на backend endpoint.
+          Mock transport нужен для локальной проверки без сервера.
+        </p>
+
+        <label class="chatbot-devpanel__label">
+          Endpoint
+          <span class="chatbot-devpanel__hint">
+            Адрес backend endpoint для POST-запроса.
+          </span>
+          <input
+            type="text"
+            data-dev-endpoint
+            value="/api/chat"
+            placeholder="/api/chat"
+          />
+        </label>
+
+        <div class="chatbot-devpanel__group">
+          <button type="button" data-dev-action="install-fetch">
+            install fetch transport
+          </button>
+          <button type="button" data-dev-action="install-mock">
+            install mock transport
+          </button>
+          <button type="button" data-dev-action="remove-transport">
+            remove transport
+          </button>
+        </div>
+      </details>
+    </div>
+
+    <style>
+      @media (max-width: 48em) {
+        .chatbot-devpanel,
+        details {
+          display: none;
+        }
+      }
+
+      .chatbot-devpanel {
+        position: fixed;
+        left: 0;
+        bottom: 22px;
+        z-index: 9999991;
+        width: 340px;
+        max-height: calc(100vh - 44px);
+        overflow: auto;
+        padding: 14px;
+        border-radius: 16px;
+        background: #fff;
+        border: 1px solid rgba(77, 77, 77, 0.12);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        font-family: Roboto, sans-serif;
+      }
+
+      .chatbot-devpanel__title {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .chatbot-devpanel__section {
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(77, 77, 77, 0.12);
+        background: #fafafa;
+      }
+
+      .chatbot-devpanel__section > summary {
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .chatbot-devpanel__section[open] > summary {
+        margin-bottom: 8px;
+      }
+
+      .chatbot-devpanel__hint {
+        margin-top: 6px;
+        margin-bottom: 10px;
+        font-size: 12px;
+        line-height: 1.4;
+        color: #666;
+      }
+
+      .chatbot-devpanel__label {
+        display: block;
+        margin-bottom: 12px;
+        font-size: 12px;
+        color: #444;
+      }
+
+      .chatbot-devpanel__label input,
+      .chatbot-devpanel__label textarea {
+        width: 100%;
+        margin-top: 6px;
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid rgba(77, 77, 77, 0.14);
+        font: inherit;
+        background: #fff;
+      }
+
+      .chatbot-devpanel__label textarea {
+        min-height: 84px;
+        resize: vertical;
+      }
+
+      .chatbot-devpanel__group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .chatbot-devpanel__group button {
+        border: 1px solid rgba(77, 77, 77, 0.14);
+        background: #f5f5f5;
+        border-radius: 10px;
+        padding: 8px 10px;
+        cursor: pointer;
+      }
+
+      .chatbot-devpanel__code-title {
+        font-size: 12px;
+        font-weight: 700;
+        margin-top: 10px;
+        margin-bottom: 6px;
+      }
+
+      .chatbot-devpanel__code,
+      .chatbot-devpanel__state {
+        margin: 0;
+        padding: 10px;
+        border-radius: 10px;
+        background: #1f1f1f;
+        color: #f3f3f3;
+        font-size: 12px;
+        line-height: 1.45;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      @media (max-width: 1280px) {
+        .chatbot-devpanel {
+          right: 22px;
+          bottom: 520px;
+        }
+      }
+    </style>
+    <script>
+      (() => {
+        function initDevPanel() {
+          const panel = document.querySelector("[data-chatbot-devpanel]");
+          const chatbot = window.FLCChatbot;
+
+          if (!panel || !chatbot) return;
+          if (panel.dataset.inited === "true") return;
+
+          panel.dataset.inited = "true";
+
+          const els = {
+            text: panel.querySelector("[data-dev-text]"),
+            resolve: panel.querySelector("[data-dev-resolve]"),
+            endpoint: panel.querySelector("[data-dev-endpoint]"),
+            state: panel.querySelector("[data-dev-state]"),
+            optionsTitle: panel.querySelector("[data-dev-options-title]"),
+            optionsItems: panel.querySelector("[data-dev-options-items]"),
+          };
+
+          let lastRequestId = null;
+
+          const renderState = () => {
+            if (els && els.state) {
+              els.state.textContent = JSON.stringify(
+                chatbot.getState(),
+                null,
+                2,
+              );
+            }
+          };
+
+          const parseOptions = value =>
+            String(value || "")
+              .split("\n")
+              .map(line => line.trim())
+              .filter(Boolean)
+              .map((line, index) => {
+                const [labelRaw, valueRaw] = line.split("|");
+                const label = (labelRaw || "").trim();
+                const optionValue = (
+                  valueRaw ||
+                  label ||
+                  `option-${index + 1}`
+                ).trim();
+
+                return {
+                  label,
+                  value: optionValue,
+                };
+              })
+              .filter(option => option.label);
+
+          const installFetchTransport = () => {
+            const endpoint = els.endpoint.value.trim();
+            if (!endpoint) return;
+
+            chatbot.setTransport(async ({ text, requestId, meta }) => {
+              const response = await fetch(endpoint, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  message: text,
+                  requestId,
+                  meta,
+                }),
+              });
+
+              if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+              }
+
+              const data = await response.json();
+
+              return {
+                text: data.text || "",
+                messages:
+                  Array.isArray(data.messages) ? data.messages : undefined,
+                optionsText: data.optionsText,
+                options: Array.isArray(data.options) ? data.options : undefined,
+              };
+            });
+
+            renderState();
+          };
+
+          const installMockTransport = () => {
+            chatbot.setTransport(async ({ text }) => {
+              await new Promise(resolve => setTimeout(resolve, 800));
+
+              return {
+                text: `Mock ответ на: ${text}`,
+              };
+            });
+
+            renderState();
+          };
+
+          panel.addEventListener("click", event => {
+            const button = event.target.closest("[data-dev-action]");
+            if (!button) return;
+
+            const action = button.dataset.devAction;
+            const text = els.text.value.trim();
+            const resolveText = els.resolve.value.trim();
+            const optionsTitle = els.optionsTitle.value.trim();
+            const options = parseOptions(els.optionsItems.value);
+
+            switch (action) {
+              case "open":
+                chatbot.open();
+                break;
+
+              case "close":
+                chatbot.close();
+                break;
+
+              case "pending":
+                chatbot.showPending();
+                break;
+
+              case "hide-pending":
+                chatbot.hidePending(undefined, { resetStatus: true });
+                break;
+
+              case "clear":
+                chatbot.clear();
+                break;
+
+              case "reset":
+                chatbot.reset();
+                break;
+
+              case "bot-message":
+                if (text) {
+                  chatbot.addBotMessage(text);
+                }
+                break;
+
+              case "user-message":
+                if (text) {
+                  chatbot.addUserMessage(text);
+                }
+                break;
+
+              case "send":
+                if (text) {
+                  lastRequestId = chatbot.send(text, { source: "dev-panel" });
+                }
+                break;
+
+              case "bot-options":
+                if (options.length) {
+                  const blocks = [];
+
+                  if (optionsTitle) {
+                    blocks.push({
+                      type: "text",
+                      text: optionsTitle,
+                    });
+                  }
+
+                  blocks.push({
+                    type: "options",
+                    options,
+                  });
+
+                  chatbot.addMessage({
+                    role: "bot",
+                    blocks,
+                  });
+                }
+                break;
+
+              case "resolve-options": {
+                const state = chatbot.getState();
+                const activeId = state.activeRequestId || lastRequestId;
+
+                if (activeId && options.length) {
+                  chatbot.resolve(activeId, {
+                    optionsText: optionsTitle || "Выберите из вариантов:",
+                    options,
+                  });
+                }
+                break;
+              }
+
+              case "resolve": {
+                const state = chatbot.getState();
+                const activeId = state.activeRequestId || lastRequestId;
+
+                if (activeId) {
+                  chatbot.resolve(activeId, {
+                    text: resolveText || "resolve",
+                  });
+                }
+                break;
+              }
+
+              case "reject": {
+                const state = chatbot.getState();
+                const activeId = state.activeRequestId || lastRequestId;
+
+                if (activeId) {
+                  chatbot.reject(activeId, resolveText || "reject");
+                }
+                break;
+              }
+
+              case "install-fetch":
+                installFetchTransport();
+                break;
+
+              case "install-mock":
+                installMockTransport();
+                break;
+
+              case "remove-transport":
+                chatbot.setTransport(null);
+                break;
+            }
+
+            renderState();
+          });
+
+          chatbot.on("statechange", renderState);
+          chatbot.on("outgoing", event => {
+            lastRequestId = event.detail.requestId;
+            renderState();
+          });
+          chatbot.on("resolved", renderState);
+          chatbot.on("rejected", renderState);
+
+          renderState();
+        }
+
+        window.addEventListener("load", initDevPanel, { once: true });
+      })();
+    </script>
+  </body>
+</html>
