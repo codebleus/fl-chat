@@ -32,6 +32,7 @@
     scrollBehavior: "smooth",
     errorText: "Что-то пошло не так. Попробуйте ещё раз.",
     onSubmit: null,
+    pendingDelay: 180,
   });
 
   const clone = value => {
@@ -75,6 +76,17 @@
       this.bind();
       this.renderState();
       this.scrollToBottom({ behavior: "auto" });
+
+      this.pendingTimer = null;
+    }
+
+    clearPendingTimer() {
+      if (this.pendingTimer) {
+        clearTimeout(this.pendingTimer);
+        this.pendingTimer = null;
+      }
+
+      return this;
     }
 
     cacheDom() {
@@ -350,11 +362,37 @@
       this.state.activeRequestId = requestId;
 
       if (this.options.autoPendingOnSend) {
-        this.showPending(
-          { requestId },
-          { scroll: false },
-          { setPendingStatus: true, requestId },
-        );
+        this.setStatus(STATUS.PENDING, {
+          activeRequestId: requestId,
+        });
+
+        this.clearPendingTimer();
+
+        const delay = Math.max(0, Number(this.options.pendingDelay) || 0);
+
+        if (delay > 0) {
+          this.pendingTimer = setTimeout(() => {
+            this.pendingTimer = null;
+
+            if (this.state.activeRequestId !== requestId) return;
+            if (this.state.status !== STATUS.PENDING) return;
+            if (this.state.pendingId) return;
+
+            this.showPending(
+              { requestId },
+              { scroll: false },
+              { setPendingStatus: false, requestId },
+            );
+
+            this.scrollToBottom({ behavior: "auto" });
+          }, delay);
+        } else {
+          this.showPending(
+            { requestId },
+            { scroll: false },
+            { setPendingStatus: false, requestId },
+          );
+        }
       } else {
         this.setStatus(STATUS.PENDING, {
           activeRequestId: requestId,
@@ -388,6 +426,8 @@
     }
 
     resolve(requestId, response = {}) {
+      this.clearPendingTimer();
+
       if (
         !this.options.allowParallelRequests &&
         this.state.activeRequestId &&
@@ -471,6 +511,8 @@
     }
 
     reject(requestId, error) {
+      this.clearPendingTimer();
+
       if (
         !this.options.allowParallelRequests &&
         this.state.activeRequestId &&
@@ -1030,8 +1072,14 @@
     }
 
     scrollToBottom({ behavior = this.options.scrollBehavior } = {}) {
-      this.dom.content.scrollTo({
-        top: this.dom.content.scrollHeight,
+      const el = this.dom.content;
+      const maxTop = el.scrollHeight - el.clientHeight;
+
+      if (maxTop <= 0) return;
+      if (Math.abs(el.scrollTop - maxTop) <= 1) return;
+
+      el.scrollTo({
+        top: maxTop,
         behavior,
       });
     }
