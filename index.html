@@ -8,7 +8,12 @@
       href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&amp;display=swap"
       rel="stylesheet"
     />
+
     <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/simplebar/6.3.2/simplebar.css"
+    />
   </head>
   <body>
     <main>
@@ -27,7 +32,7 @@
                 </button>
               </div>
               <div class="chatbot__body">
-                <div class="chatbot__content">
+                <div class="chatbot__content" data-simplebar>
                   <div class="chatbot__shell"></div>
                 </div>
                 <form action="#" class="chatbot__form">
@@ -123,6 +128,10 @@
       </symbol>
     </svg>
 
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/simplebar/6.3.2/simplebar.min.js"
+      defer
+    ></script>
     <script defer src="script.js"></script>
 
     <!-- тут не переносим -->

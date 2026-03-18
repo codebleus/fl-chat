@@ -1,5 +1,6 @@
 (() => {
   const SELECTORS = {
+    root: ".chatbot",
     chat: ".chatbot__chat",
     wrap: ".chatbot__wrap",
     shell: ".chatbot__shell",
@@ -33,6 +34,11 @@
     errorText: "Что-то пошло не так. Попробуйте ещё раз.",
     onSubmit: null,
     pendingDelay: 180,
+    simplebar: true,
+    simplebarAutoHide: false,
+    simplebarForceVisible: "y",
+    stickToBottomThreshold: 48,
+    autoHide: false,
   });
 
   const clone = value => {
@@ -65,32 +71,34 @@
         requestSeq: 0,
       };
 
+      this.pendingTimer = null;
+      this.simplebar = null;
+      this.scrollEl = null;
+      this.resizeObserver = null;
+      this.mutationObserver = null;
+      this.userScrolledUp = false;
+      this.scrollRaf = null;
+
       this.bound = {
         onFormSubmit: this.onFormSubmit.bind(this),
         onOpenClick: this.toggle.bind(this),
         onCloseClick: this.close.bind(this),
         onOptionChange: this.onOptionChange.bind(this),
         onDocumentClick: this.onDocumentClick.bind(this),
+        onScroll: this.onScroll.bind(this),
+        onWindowResize: this.onWindowResize.bind(this),
       };
 
+      this.initSimplebar();
       this.bind();
+      this.initObservers();
       this.renderState();
-      this.scrollToBottom({ behavior: "auto" });
-
-      this.pendingTimer = null;
-    }
-
-    clearPendingTimer() {
-      if (this.pendingTimer) {
-        clearTimeout(this.pendingTimer);
-        this.pendingTimer = null;
-      }
-
-      return this;
+      this.scrollToBottom({ behavior: "auto", force: true });
     }
 
     cacheDom() {
       const dom = {
+        root: this.root,
         chat: this.root.querySelector(SELECTORS.chat),
         wrap: this.root.querySelector(SELECTORS.wrap),
         shell: this.root.querySelector(SELECTORS.shell),
@@ -121,6 +129,39 @@
       return dom;
     }
 
+    initSimplebar() {
+      const shouldUseSimplebar =
+        this.options.simplebar &&
+        typeof window.SimpleBar !== "undefined" &&
+        this.dom.content;
+
+      if (!shouldUseSimplebar) {
+        this.scrollEl = this.dom.content;
+        return;
+      }
+
+      if (!this.dom.content.hasAttribute("data-simplebar")) {
+        this.dom.content.setAttribute("data-simplebar", "");
+      }
+
+      this.simplebar = new window.SimpleBar(this.dom.content, {
+        autoHide: this.options.simplebarAutoHide,
+        forceVisible: this.options.simplebarForceVisible,
+      });
+
+      this.scrollEl = this.simplebar.getScrollElement();
+    }
+
+    getScrollElement() {
+      return this.scrollEl || this.dom.content;
+    }
+
+    recalculateSimplebar() {
+      if (this.simplebar && typeof this.simplebar.recalculate === "function") {
+        this.simplebar.recalculate();
+      }
+    }
+
     bind() {
       this.dom.form.addEventListener("submit", this.bound.onFormSubmit);
       this.dom.shell.addEventListener("change", this.bound.onOptionChange);
@@ -134,6 +175,20 @@
       }
 
       document.addEventListener("click", this.bound.onDocumentClick);
+
+      if (this.getScrollElement()) {
+        this.getScrollElement().addEventListener(
+          "scroll",
+          this.bound.onScroll,
+          {
+            passive: true,
+          },
+        );
+      }
+
+      window.addEventListener("resize", this.bound.onWindowResize, {
+        passive: true,
+      });
     }
 
     unbind() {
@@ -149,10 +204,72 @@
       }
 
       document.removeEventListener("click", this.bound.onDocumentClick);
+
+      if (this.getScrollElement()) {
+        this.getScrollElement().removeEventListener(
+          "scroll",
+          this.bound.onScroll,
+        );
+      }
+
+      window.removeEventListener("resize", this.bound.onWindowResize);
+    }
+
+    initObservers() {
+      if (typeof MutationObserver !== "undefined") {
+        this.mutationObserver = new MutationObserver(() => {
+          this.recalculateSimplebar();
+
+          if (!this.userScrolledUp) {
+            this.scrollToBottom({ behavior: "auto", force: true });
+          }
+        });
+
+        this.mutationObserver.observe(this.dom.shell, {
+          childList: true,
+          subtree: true,
+        });
+      }
+
+      if (typeof ResizeObserver !== "undefined") {
+        this.resizeObserver = new ResizeObserver(() => {
+          this.recalculateSimplebar();
+
+          if (!this.userScrolledUp) {
+            this.scrollToBottom({ behavior: "auto", force: true });
+          }
+        });
+
+        this.resizeObserver.observe(this.dom.shell);
+      }
+    }
+
+    disconnectObservers() {
+      if (this.mutationObserver) {
+        this.mutationObserver.disconnect();
+        this.mutationObserver = null;
+      }
+
+      if (this.resizeObserver) {
+        this.resizeObserver.disconnect();
+        this.resizeObserver = null;
+      }
     }
 
     destroy() {
+      this.clearPendingTimer();
+      this.disconnectObservers();
       this.unbind();
+
+      if (this.scrollRaf) {
+        cancelAnimationFrame(this.scrollRaf);
+        this.scrollRaf = null;
+      }
+
+      if (this.simplebar && typeof this.simplebar.unMount === "function") {
+        this.simplebar.unMount();
+      }
+
       this.root.removeAttribute("data-status");
       this.root.removeAttribute("data-open");
       this.root.classList.remove("is-open", "is-pending", "is-locked");
@@ -183,6 +300,34 @@
       return clone(this.state);
     }
 
+    clearPendingTimer() {
+      if (this.pendingTimer) {
+        clearTimeout(this.pendingTimer);
+        this.pendingTimer = null;
+      }
+      return this;
+    }
+
+    onWindowResize() {
+      this.recalculateSimplebar();
+
+      if (!this.userScrolledUp) {
+        this.scrollToBottom({ behavior: "auto", force: true });
+      }
+    }
+
+    onScroll() {
+      this.userScrolledUp = !this.isNearBottom();
+    }
+
+    isNearBottom(threshold = this.options.stickToBottomThreshold) {
+      const el = this.getScrollElement();
+      if (!el) return true;
+
+      const distance = el.scrollHeight - el.clientHeight - el.scrollTop;
+      return distance <= threshold;
+    }
+
     renderState() {
       const isPending = this.state.status === STATUS.PENDING;
       const isLockedByState = this.state.isLocked;
@@ -206,6 +351,8 @@
       this.dom.input.disabled = controlsDisabled;
       this.dom.submit.disabled = controlsDisabled;
       this.dom.content.setAttribute("aria-busy", String(isPending));
+
+      this.recalculateSimplebar();
     }
 
     setStatus(status, patch = {}) {
@@ -242,7 +389,11 @@
     open({ silent = false } = {}) {
       this.state.isOpen = true;
       this.renderState();
-      this.scrollToBottom({ behavior: "auto" });
+
+      requestAnimationFrame(() => {
+        this.recalculateSimplebar();
+        this.scrollToBottom({ behavior: "auto", force: true });
+      });
 
       if (!silent) {
         this.emit("open", { state: this.getState() });
@@ -356,6 +507,7 @@
       }
 
       const requestId = `req-${++this.state.requestSeq}`;
+      const shouldStick = this.isNearBottom();
 
       this.addUserMessage(value, meta, { scroll: false });
 
@@ -384,7 +536,10 @@
               { setPendingStatus: false, requestId },
             );
 
-            this.scrollToBottom({ behavior: "auto" });
+            if (shouldStick) {
+              this.userScrolledUp = false;
+              this.scrollToBottom({ behavior: "auto", force: true });
+            }
           }, delay);
         } else {
           this.showPending(
@@ -399,7 +554,10 @@
         });
       }
 
-      this.scrollToBottom({ behavior: "auto" });
+      if (shouldStick) {
+        this.userScrolledUp = false;
+        this.scrollToBottom({ behavior: "auto", force: true });
+      }
 
       const payload = {
         requestId,
@@ -435,6 +593,8 @@
       ) {
         return false;
       }
+
+      const shouldStick = this.isNearBottom();
 
       if (response.removePending !== false) {
         this.hidePending();
@@ -493,8 +653,9 @@
         hasNewContent = true;
       }
 
-      if (hasNewContent) {
-        this.scrollToBottom({ behavior: "auto" });
+      if (hasNewContent && shouldStick) {
+        this.userScrolledUp = false;
+        this.scrollToBottom({ behavior: "auto", force: true });
       }
 
       this.setStatus(response.status || STATUS.IDLE, {
@@ -521,6 +682,8 @@
         return false;
       }
 
+      const shouldStick = this.isNearBottom();
+
       this.hidePending();
 
       let errorText = this.options.errorText;
@@ -537,7 +700,11 @@
 
       if (errorText) {
         this.addBotMessage(errorText, { isError: true }, { scroll: false });
-        this.scrollToBottom({ behavior: "auto" });
+
+        if (shouldStick) {
+          this.userScrolledUp = false;
+          this.scrollToBottom({ behavior: "auto", force: true });
+        }
       }
 
       this.setStatus(STATUS.ERROR, {
@@ -602,6 +769,8 @@
         this.state.pendingId = null;
       }
 
+      this.recalculateSimplebar();
+
       if (resetStatus && this.state.status === STATUS.PENDING) {
         this.setStatus(STATUS.IDLE, {
           activeRequestId: null,
@@ -629,6 +798,7 @@
         this.state.pendingId = null;
       }
 
+      this.recalculateSimplebar();
       return true;
     }
 
@@ -636,7 +806,7 @@
       messages.forEach(message => this.addMessage(message, { scroll: false }));
 
       if (scroll && messages.length) {
-        this.scrollToBottom({ behavior: "auto" });
+        this.scrollToBottom({ behavior: "auto", force: true });
       }
 
       return this;
@@ -678,7 +848,7 @@
         });
 
         if (scroll) {
-          this.scrollToBottom({ behavior: "auto" });
+          this.scrollToBottom({ behavior: "auto", force: true });
         }
 
         return normalized.id;
@@ -707,7 +877,7 @@
       });
 
       if (scroll) {
-        this.scrollToBottom({ behavior: "auto" });
+        this.scrollToBottom({ behavior: "auto", force: true });
       }
 
       return normalized.id;
@@ -1049,11 +1219,15 @@
     clear() {
       this.dom.shell.innerHTML = "";
       this.state.pendingId = null;
+      this.userScrolledUp = false;
 
       this.setStatus(STATUS.IDLE, {
         activeRequestId: null,
         pendingId: null,
       });
+
+      this.recalculateSimplebar();
+      this.scrollToBottom({ behavior: "auto", force: true });
 
       return this;
     }
@@ -1061,32 +1235,52 @@
     reset({ restoreInitial = true } = {}) {
       this.dom.shell.innerHTML = restoreInitial ? this.initialShellHTML : "";
       this.state.pendingId = null;
+      this.userScrolledUp = false;
 
       this.setStatus(STATUS.IDLE, {
         activeRequestId: null,
         pendingId: null,
       });
 
-      this.scrollToBottom({ behavior: "auto" });
+      this.recalculateSimplebar();
+      this.scrollToBottom({ behavior: "auto", force: true });
+
       return this;
     }
 
-    scrollToBottom({ behavior = this.options.scrollBehavior } = {}) {
-      const el = this.dom.content;
-      const maxTop = el.scrollHeight - el.clientHeight;
+    scrollToBottom({
+      behavior = this.options.scrollBehavior,
+      force = false,
+    } = {}) {
+      const el = this.getScrollElement();
+      if (!el) return;
 
-      if (maxTop <= 0) return;
-      if (Math.abs(el.scrollTop - maxTop) <= 1) return;
+      if (!force && this.userScrolledUp) return;
 
-      el.scrollTo({
-        top: maxTop,
-        behavior,
+      this.recalculateSimplebar();
+
+      if (this.scrollRaf) {
+        cancelAnimationFrame(this.scrollRaf);
+      }
+
+      this.scrollRaf = requestAnimationFrame(() => {
+        const maxTop = el.scrollHeight - el.clientHeight;
+        if (maxTop <= 0) return;
+
+        if (behavior === "auto") {
+          el.scrollTop = maxTop;
+        } else {
+          el.scrollTo({
+            top: maxTop,
+            behavior,
+          });
+        }
       });
     }
   }
 
   const initChatbot = () => {
-    const root = document.querySelector(".chatbot");
+    const root = document.querySelector(SELECTORS.root);
     if (!root || window.FLCChatbot) return;
 
     const chatbot = new ChatbotWidget(root, {
@@ -1094,6 +1288,10 @@
       autoPendingOnSend: true,
       lockInputOnPending: false,
       allowParallelRequests: false,
+      simplebar: true,
+      simplebarAutoHide: false,
+      simplebarForceVisible: "y",
+      stickToBottomThreshold: 48,
     });
 
     window.FLCChatbot = chatbot;

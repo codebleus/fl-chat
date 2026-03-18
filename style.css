@@ -335,10 +335,6 @@ p {
   padding-right: 3px;
   display: flex;
   height: 448px;
-  overflow: auto;
-
-  -ms-overflow-style: none;
-  scrollbar-width: none;
 }
 
 /* .chatbot__content::-webkit-scrollbar {
@@ -454,6 +450,11 @@ p {
   border: 1px solid rgba(77, 77, 77, 0.12);
 }
 
+.chatbot .simplebar-track {
+  right: -14px;
+  pointer-events: all;
+}
+
 .chatbot__messages-wrap:not(:has(.chatbot__bot)) .chatbot__message {
   border: none;
   background-color: var(--c-grey);
@@ -464,6 +465,7 @@ p {
 }
 .chatbot__txt {
   color: var(--c-black);
+  word-break: auto-phrase;
 }
 .chatbot__list {
   display: flex;
