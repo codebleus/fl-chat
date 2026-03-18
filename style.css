@@ -465,7 +465,7 @@ p {
 }
 .chatbot__txt {
   color: var(--c-black);
-  word-break: auto-phrase;
+  word-break: break-word;
 }
 .chatbot__list {
   display: flex;
